@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mercy Hospital - Network Portal</title>
+    <style>
+        :root {
+            --hospital-blue: #003366;
+            --accent-blue: #0056a6;
+            --success-green: #28a745;
+            --light-bg: #f8fafc;
+            --border-radius: 10px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f9ff 0%, #e8f2ff 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--hospital-blue) 0%, #004080 100%);
+            color: white;
+            padding: 2.5rem 0;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 51, 102, 0.2);
+        }
+
+        .hospital-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .hospital-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .status-bar {
+            background: #e8f5e9;
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid #c8e6c9;
+            font-weight: 500;
+            color: #2e7d32;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: var(--success-green);
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e0e7ff;
+        }
+
+        .card-title {
+            color: var(--hospital-blue);
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #eef2f7;
+        }
+
+        .vpc-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .vpc-box {
+            background: linear-gradient(145deg, #f8faff, #f0f5ff);
+            border-radius: var(--border-radius);
+            padding: 1.8rem;
+            border: 2px solid #e0e7ff;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .vpc-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 86, 166, 0.15);
+        }
+
+        .vpc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .vpc-name {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .vpc-tag {
+            background: var(--hospital-blue);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .ip-box {
+            background: #eef5ff;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid var(--accent-blue);
+        }
+
+        .ip-label { font-size: 0.9rem; color: #666; margin-bottom: 0.3rem; }
+
+        .ip-value {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+        }
+
+        .peering-section {
+            text-align: center;
+            padding: 2.5rem;
+            margin: 3rem 0;
+            background: linear-gradient(135deg, #f0f7ff, #e8f2ff);
+            border-radius: var(--border-radius);
+            border: 2px dashed #a3c4ff;
+        }
+
+        .peering-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--success-green), #4caf50);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .access-panel {
+            text-align: center;
+            padding: 3rem;
+            background: linear-gradient(135deg, #f8faff, #f0f5ff);
+            border-radius: var(--border-radius);
+            border: 2px solid #d1e0ff;
+            margin: 2rem 0;
+        }
+
+        .access-icon { font-size: 4rem; margin-bottom: 1.5rem; color: var(--accent-blue); }
+
+        .access-title { font-size: 1.8rem; color: var(--hospital-blue); margin-bottom: 1rem; }
+
+        .access-desc {
+            color: #666;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            line-height: 1.8;
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent-blue), var(--hospital-blue));
+            color: white;
+            padding: 1.2rem 3rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.2rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 6px 20px rgba(0, 86, 166, 0.25);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 86, 166, 0.35);
+            background: linear-gradient(135deg, #0066cc, var(--hospital-blue));
+        }
+
+        .connection-path { margin-top: 1.5rem; font-size: 1rem; color: #666; }
+
+        .path-arrow { display: inline-block; margin: 0 10px; color: var(--accent-blue); font-weight: bold; }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .tech-item {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e1e8f0;
+        }
+
+        .tech-title { color: var(--accent-blue); font-size: 1.1rem; margin-bottom: 0.5rem; font-weight: 600; }
+
+        .footer {
+            background: var(--hospital-blue);
+            color: white;
+            padding: 2.5rem 0;
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .hospital-name { font-size: 2rem; }
+            .vpc-container { grid-template-columns: 1fr; }
+            .main-container { padding: 0 1rem; }
+            .btn { padding: 1rem 2rem; font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div>
+            <h1 class="hospital-name">🏥 Mercy General Hospital</h1>
+            <p class="hospital-subtitle">Network Operations Center</p>
+        </div>
+    </header>
+
+    <div class="status-bar">
+        <span class="status-dot"></span>
+        VPC Peering Connection Active & Secure
+    </div>
+
+    <main class="main-container">
+        <div class="dashboard">
+            <div class="card">
+                <h2 class="card-title">Network Infrastructure</h2>
+
+                <div class="vpc-container">
+                    <div class="vpc-box">
+                        <div class="vpc-header">
+                            <div class="vpc-name">🏥 Hospital VPC</div>
+                            <span class="vpc-tag">VPC-A</span>
+                        </div>
+
+                        <div class="ip-box">
+                            <div class="ip-label">CIDR Block</div>
+                            <div class="ip-value">10.0.0.0/16</div>
+                        </div>
+
+                        <div class="ip-box">
+                            <div class="ip-label">Web Server IP</div>
+                            <div class="ip-value">10.0.1.10</div>
+                        </div>
+
+                        <div style="margin-top: 1.5rem;">
+                            <div style="color: #666; margin-bottom: 0.5rem;">Access Type:</div>
+                            <div style="color: var(--accent-blue); font-weight: 500;">Public Internet Gateway</div>
+                        </div>
+                    </div>
+
+                    <div class="vpc-box">
+                        <div class="vpc-header">
+                            <div class="vpc-name">🔬 Research VPC</div>
+                            <span class="vpc-tag">VPC-B</span>
+                        </div>
+
+                        <div class="ip-box">
+                            <div class="ip-label">CIDR Block</div>
+                            <div class="ip-value">10.1.0.0/16</div>
+                        </div>
+
+                        <div class="ip-box">
+                            <div class="ip-label">Web Server IP</div>
+                            <div class="ip-value">10.1.1.10</div>
+                        </div>
+
+                        <div style="margin-top: 1.5rem;">
+                            <div style="color: #666; margin-bottom: 0.5rem;">Access Type:</div>
+                            <div style="color: var(--accent-blue); font-weight: 500;">Private VPC Peering Only</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="peering-section">
+                    <div class="peering-status">
+                        <span class="status-dot"></span>
+                        VPC Peering Connection Established
+                    </div>
+                    <p style="color: #555; font-size: 1.1rem; margin-bottom: 0.5rem;">
+                        Direct private connectivity via AWS backbone network
+                    </p>
+                    <p style="color: #777; font-size: 0.95rem;">
+                        • Encrypted traffic • No internet exposure • Single-digit latency
+                    </p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="access-panel">
+                    <div class="access-icon">🔬</div>
+                    <h2 class="access-title">Access Research Laboratory</h2>
+                    <p class="access-desc">
+                        Click below to access the Research Laboratory network via secure VPC peering.
+                        This demonstrates private connectivity between separate VPCs using AWS infrastructure.
+                    </p>
+
+                    <!-- EDIT: changed from /research.html to / (Apache serves index.html by default). -->
+                    <a href="http://10.1.1.10/" class="btn" target="_blank">
+                        Connect to Research Portal
+                    </a>
+
+                    <div class="connection-path">
+                        <span style="color: #666;">Connection Path:</span>
+                        <span class="ip-value">10.0.1.10</span>
+                        <span class="path-arrow">→</span>
+                        <span style="color: var(--accent-blue); font-weight: 500;">VPC Peering</span>
+                        <span class="path-arrow">→</span>
+                        <span class="ip-value">10.1.1.10</span>
+                    </div>
+                </div>
+
+                <h3 style="color: var(--hospital-blue); margin-top: 2rem; margin-bottom: 1.5rem;">Technical Implementation</h3>
+
+                <div class="tech-grid">
+                    <div class="tech-item">
+                        <div class="tech-title">VPC Peering Connection</div>
+                        <p style="color: #666; font-size: 0.95rem; margin-top: 0.5rem;">
+                            Direct network link between VPCs using private IP space
+                        </p>
+                    </div>
+
+                    <div class="tech-item">
+                        <div class="tech-title">Route Table Configuration</div>
+                        <p style="color: #666; font-size: 0.95rem; margin-top: 0.5rem;">
+                            Traffic routed through peering connection instead of internet
+                        </p>
+                    </div>
+
+                    <div class="tech-item">
+                        <div class="tech-title">Security Group Rules</div>
+                        <p style="color: #666; font-size: 0.95rem; margin-top: 0.5rem;">
+                            Fine-grained access control allowing specific cross-VPC traffic
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p style="font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem;">
+            Mercy General Hospital Network Operations
+        </p>
+        <p style="opacity: 0.9; margin-bottom: 1rem;">
+            AWS VPC Peering Demonstration
+        </p>
+        <div style="font-size: 0.9rem; opacity: 0.8; margin-top: 1.5rem;">
+            <div>Hospital VPC: 10.0.0.0/16 | Research VPC: 10.1.0.0/16</div>
+            <div id="timestamp" style="margin-top: 0.5rem;"></div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            document.getElementById('timestamp').textContent =
+                `Last updated: ${now.toLocaleDateString('en-US', options)}`;
+
+            console.log('%c🏥 Mercy Hospital VPC Peering Demo',
+                'color: #0056a6; font-size: 16px; font-weight: bold;');
+            console.log('%cVPC-A: 10.0.0.0/16 → VPC-B: 10.1.0.0/16',
+                'color: #28a745; font-weight: bold;');
+            console.log('Click the button to test VPC peering connection');
+        });
+    </script>
+</body>
+</html>
