@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Laboratory - Private Network</title>
+    <style>
+        :root {
+            --research-purple: #4a148c;
+            --accent-purple: #7b1fa2;
+            --success-green: #00c853;
+            --light-bg: #faf5ff;
+            --border-radius: 10px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f3e5f5 0%, #e8dff5 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--research-purple) 0%, #6a1b9a 100%);
+            color: white;
+            padding: 2.5rem 0;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(74, 20, 140, 0.2);
+        }
+
+        .lab-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .lab-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .access-banner {
+            background: #e8f5e9;
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid #c8e6c9;
+            font-weight: 500;
+            color: #2e7d32;
+        }
+
+        .access-type {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #4caf50;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e1d5f0;
+        }
+
+        .card-title {
+            color: var(--research-purple);
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0e6f6;
+        }
+
+        .welcome-section {
+            text-align: center;
+            padding: 3rem;
+            background: linear-gradient(135deg, #faf5ff, #f3e5f5);
+            border-radius: var(--border-radius);
+            border: 2px solid #d1c4e9;
+            margin-bottom: 2rem;
+        }
+
+        .welcome-icon { font-size: 4rem; margin-bottom: 1.5rem; }
+
+        .welcome-title {
+            font-size: 2rem;
+            color: var(--research-purple);
+            margin-bottom: 1rem;
+        }
+
+        .welcome-message {
+            color: #666;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            line-height: 1.8;
+        }
+
+        .connection-info {
+            background: #f3e5f5;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .ip-display-large {
+            font-family: 'Courier New', monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent-purple);
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            display: inline-block;
+            margin: 1rem 0;
+            border: 2px solid #d1c4e9;
+        }
+
+        .connection-path { margin-top: 1.5rem; font-size: 1rem; color: #666; }
+
+        .path-item {
+            display: inline-block;
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            margin: 0 5px;
+            border: 1px solid #d1c4e9;
+        }
+
+        .arrow { color: var(--accent-purple); font-weight: bold; margin: 0 10px; }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .data-card {
+            background: linear-gradient(145deg, #faf5ff, #f3e5f5);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            border: 2px solid #e1d5f0;
+            transition: transform 0.3s;
+        }
+
+        .data-card:hover { transform: translateY(-5px); }
+
+        .data-icon { font-size: 2.5rem; margin-bottom: 1rem; color: var(--accent-purple); }
+
+        .data-title { color: var(--research-purple); font-size: 1.2rem; margin-bottom: 0.8rem; font-weight: 600; }
+
+        .data-description { color: #666; font-size: 0.95rem; line-height: 1.6; }
+
+        .vpc-details {
+            background: #f8f5fc;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            margin-top: 2rem;
+            border: 2px solid #e1d5f0;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid #e1d5f0;
+        }
+
+        .detail-label { color: #666; font-weight: 500; }
+
+        .detail-value {
+            color: var(--research-purple);
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent-purple), var(--research-purple));
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 6px 20px rgba(123, 31, 162, 0.25);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(123, 31, 162, 0.35);
+        }
+
+        .btn-back { background: linear-gradient(135deg, #757575, #616161); }
+
+        .btn-back:hover { background: linear-gradient(135deg, #616161, #424242); }
+
+        .footer {
+            background: var(--research-purple);
+            color: white;
+            padding: 2.5rem 0;
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .lab-name { font-size: 2rem; }
+            .data-grid { grid-template-columns: 1fr; }
+            .main-container { padding: 0 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div>
+            <h1 class="lab-name">🔬 Medical Research Laboratory</h1>
+            <p class="lab-subtitle">Secure Private Network</p>
+        </div>
+    </header>
+
+    <div class="access-banner">
+        <span class="access-type">
+            <span class="status-dot"></span>
+            Access via VPC Peering Only
+        </span>
+    </div>
+
+    <main class="main-container">
+        <div class="dashboard">
+            <div class="card">
+                <div class="welcome-section">
+                    <div class="welcome-icon">🎯</div>
+                    <h2 class="welcome-title">VPC Peering Connection Successful!</h2>
+                    <p class="welcome-message">
+                        You have successfully accessed the Research Laboratory network via secure VPC peering.
+                        This demonstrates private connectivity between separate AWS VPCs without internet exposure.
+                    </p>
+
+                    <div class="connection-info">
+                        <div style="color: #666; margin-bottom: 0.5rem;">Connected via private IP:</div>
+                        <div class="ip-display-large">10.1.1.10</div>
+
+                        <div class="connection-path">
+                            <span class="path-item">Hospital VPC</span>
+                            <span class="arrow">→</span>
+                            <span class="path-item">10.0.1.10</span>
+                            <span class="arrow">→</span>
+                            <span style="color: var(--accent-purple); font-weight: 600;">VPC Peering</span>
+                            <span class="arrow">→</span>
+                            <span class="path-item">10.1.1.10</span>
+                            <span class="arrow">→</span>
+                            <span class="path-item">Research VPC</span>
+                        </div>
+                    </div>
+
+                    <!-- EDIT: changed from /hospital.html to / (Apache serves index.html by default). -->
+                    <a href="http://10.0.1.10/" class="btn btn-back" style="margin-top: 2rem;">
+                        ← Return to Hospital Portal
+                    </a>
+                </div>
+
+                <h2 class="card-title">Research Systems & Data</h2>
+
+                <div class="data-grid">
+                    <div class="data-card">
+                        <div class="data-icon">🧬</div>
+                        <h3 class="data-title">Genomic Sequencing</h3>
+                        <p class="data-description">
+                            Protected genomic data repository accessible only via secure VPC peering.
+                            Contains sensitive patient DNA sequences and research findings.
+                        </p>
+                    </div>
+
+                    <div class="data-card">
+                        <div class="data-icon">📊</div>
+                        <h3 class="data-title">Clinical Trial Data</h3>
+                        <p class="data-description">
+                            Phase III trial databases with encrypted storage.
+                            Real-time analytics and patient outcome tracking.
+                        </p>
+                    </div>
+
+                    <div class="data-card">
+                        <div class="data-icon">🧪</div>
+                        <h3 class="data-title">Lab Results Portal</h3>
+                        <p class="data-description">
+                            Secure access to laboratory test results and research findings.
+                            HIPAA-compliant data transmission via VPC peering.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="vpc-details">
+                    <h3 style="color: var(--research-purple); margin-bottom: 1.5rem;">Network Configuration</h3>
+
+                    <div class="detail-row">
+                        <span class="detail-label">VPC ID:</span>
+                        <span class="detail-value">vpc-research-001</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">CIDR Block:</span>
+                        <span class="detail-value">10.1.0.0/16</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Server IP Address:</span>
+                        <span class="detail-value">10.1.1.10</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Peering Connection:</span>
+                        <span class="detail-value" style="color: var(--success-green);">pcx-1234567890abcdef</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Peering Status:</span>
+                        <span class="detail-value" style="color: var(--success-green); font-weight: bold;">● ACTIVE</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Security Profile:</span>
+                        <span class="detail-value">High - VPC Peering Only</span>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #f0e6f6;">
+                    <h3 style="color: var(--research-purple); margin-bottom: 1rem;">✅ VPC Peering Verified</h3>
+                    <p style="color: #666; max-width: 800px; margin: 0 auto 1.5rem;">
+                        This page loaded successfully via private VPC peering connection.
+                        The research network remains isolated from the internet and is accessible
+                        only through the established VPC peering connection with Mercy Hospital.
+                    </p>
+
+                    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                        <a href="http://10.0.1.10/" class="btn btn-back">
+                            ← Back to Hospital
+                        </a>
+                        <button class="btn" onclick="alert('VPC Peering connection verified successfully!\\n\\nFrom: 10.0.1.10 (Hospital)\\nTo: 10.1.1.10 (Research)\\nStatus: Active')">
+                            Verify Connection
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p style="font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem;">
+            Medical Research Laboratory Network
+        </p>
+        <p style="opacity: 0.9; margin-bottom: 1rem;">
+            Private VPC - Accessible via VPC Peering Only
+        </p>
+        <div style="font-size: 0.9rem; opacity: 0.8; margin-top: 1.5rem;">
+            <div>VPC CIDR: 10.1.0.0/16 | Server: 10.1.1.10</div>
+            <div id="timestamp" style="margin-top: 0.5rem;"></div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+            const dateStr = now.toLocaleDateString();
+            document.getElementById('timestamp').textContent =
+                `Accessed: ${dateStr} at ${timeStr}`;
+
+            console.log('%c🔬 Research Laboratory VPC',
+                'color: #7b1fa2; font-size: 16px; font-weight: bold;');
+            console.log('%cACCESS: VPC Peering Only',
+                'color: #4caf50; font-weight: bold;');
+            console.log(`%cConnected via: ${window.location.host || '10.1.1.10'}`,
+                'color: #666;');
+
+            setTimeout(() => {
+                console.log('%c✅ VPC Peering Connection Verified!',
+                    'color: #00c853; font-size: 14px; font-weight: bold;');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
